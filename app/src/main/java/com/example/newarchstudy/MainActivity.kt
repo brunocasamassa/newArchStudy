@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.newarchstudy.ui.presentation.latest.LatestNewsScreen
 import com.example.newarchstudy.ui.presentation.search.SearchNewsScreen
+import com.example.newarchstudy.ui.presentation.search.SearchTopBar
 import com.example.newarchstudy.ui.theme.NewArchStudyTheme
 import com.example.newarchstudy.utils.Factory
 import com.example.newarchstudy.viewmodels.SearchNewsViewModel
@@ -54,12 +55,10 @@ class MainActivity : ComponentActivity() {
                 mutableStateOf(true)
             }
 
-            val uiState by Factory.searchNewsViewModel.uiState.collectAsStateWithLifecycle()
-
             NewArchStudyTheme {
 
                 Scaffold(
-                    topBar = { if (homeSelected.value.not()) SearchTopBar(viewModel = Factory.searchNewsViewModel) },
+                    topBar = { if (homeSelected.value.not()) SearchTopBar() },
                     bottomBar = { HomeBottomBar(homeSelected) }) {
 
                     innerPadding -> Modifier.padding(innerPadding)
@@ -71,7 +70,7 @@ class MainActivity : ComponentActivity() {
                                 LatestNewsScreen()
 
                             else ->
-                                SearchNewsScreen(uiState)
+                                SearchNewsScreen()
                         }
                     }
 
@@ -126,50 +125,7 @@ class MainActivity : ComponentActivity() {
     }
 
 
-    @OptIn(ExperimentalMaterial3Api::class)
-    @Composable
-    fun SearchTopBar(viewModel: SearchNewsViewModel) {
 
-
-        var currentlyText by remember {
-            mutableStateOf("")
-        }
-        var isActive by remember { mutableStateOf(false) }
-
-        SearchBar(
-            onQueryChange = { currentlyText = it }, //update the value of searchText
-            onSearch = {
-                isActive = false
-                viewModel.searchNews(currentlyText)
-            }, //the callback to be invoked when the input service triggers the ImeAction.Search action
-            onActiveChange = {
-                isActive = it
-            }, //the callback to be invoked when this search bar's active state is changed
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            active = isActive,
-            content = { currentlyText },
-            query = currentlyText,
-            placeholder = { Text(text = stringResource(R.string.search)) },
-            leadingIcon = {
-                Icon(
-                    imageVector = Icons.Filled.Search, contentDescription = stringResource(
-                        R.string.search
-                    )
-                )
-            },
-            trailingIcon = {
-                Icon(
-                    imageVector = Icons.Filled.Close, contentDescription = stringResource(
-                        R.string.close
-                    )
-                )
-            }
-        )
-
-
-    }
 
 }
 

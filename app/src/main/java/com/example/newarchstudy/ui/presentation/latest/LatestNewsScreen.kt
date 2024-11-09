@@ -23,6 +23,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -51,7 +52,7 @@ import com.example.newarchstudy.utils.Factory
 @Composable
 fun LatestNewsScreen() {
 
-    val uiState by Factory.latestNewsViewModel.uiState.collectAsStateWithLifecycle()
+    val uiState by Factory.latestNewsViewModel.uiState.collectAsState()
 
     BoxWithConstraints() {
 

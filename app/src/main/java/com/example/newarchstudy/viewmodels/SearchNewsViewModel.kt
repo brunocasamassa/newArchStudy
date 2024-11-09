@@ -23,30 +23,31 @@ import kotlinx.coroutines.launch
  * */
 
 /** View Model for Latest News */
-class SearchNewsViewModel: ViewModel() {
+class SearchNewsViewModel : ViewModel() {
 
     //necessario esses mutables para utilizar dentro da classe, mesmo soh observando o UIstate
     private val _isLoading = MutableStateFlow(true)
-    private val description  = MutableStateFlow("")
+    private val description = MutableStateFlow("")
 
 
-    var title : Flow<String> = MutableStateFlow("")
-    var author : Flow<String> = MutableStateFlow("")
-    var language : Flow<String> = MutableStateFlow("")
-    var region : Flow<String> = MutableStateFlow("")
+    var title: Flow<String> = MutableStateFlow("")
+    var author: Flow<String> = MutableStateFlow("")
+    var language: Flow<String> = MutableStateFlow("")
+    var region: Flow<String> = MutableStateFlow("")
 
-    private var _searchNews : Flow<News> = searchNewsRepository.searchNews(description.value)
+    private var _searchNews: Flow<News> =
+        searchNewsRepository.searchNews(author = description.value)
 
     //todo test
-    var uiState: StateFlow<SearchNewsUiState> = combine(
+    val uiState = MutableStateFlow(SearchNewsUiState()) /*= combine(
         _isLoading,
         _searchNews
-    ) { _,response ->
+    ) { _, response ->
         SearchNewsUiState(
             isLoading = true
         )
 
-        when(response.news.isNullOrEmpty().not()){
+        when (response.news.isNullOrEmpty().not()) {
             true -> {
                 SearchNewsUiState(
                     isLoading = false,
@@ -54,6 +55,7 @@ class SearchNewsViewModel: ViewModel() {
                 )
 
             }
+
             else -> {
                 SearchNewsUiState(
                     isLoading = false,
@@ -65,21 +67,45 @@ class SearchNewsViewModel: ViewModel() {
         }
 
 
-    }.stateIn(initialValue = SearchNewsUiState(false,News()), scope = viewModelScope, started = SharingStarted.WhileSubscribed(5000))
+    }.stateIn(
+        initialValue = SearchNewsUiState(false, News()),
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000)
+    )*/
 
 
-    fun searchNews(text: String){
-                description.value = text
-                _searchNews = searchNewsRepository.searchNews(description.value)
+    fun searchNews(text: String) {
+        viewModelScope.launch {
+            searchNewsRepository.searchNews(author = text)
+                .collect {
+                    uiState.value = when (it.news.isNullOrEmpty().not()) {
+                        true -> {
+                            SearchNewsUiState(
+                                isLoading = false,
+                                searchedNews = it
+                            )
 
+                        }
+
+                        else -> {
+                            SearchNewsUiState(
+                                isLoading = false,
+                                isError = true
+                            )
+
+                        }
+
+                    }
+                }
         }
+    }
+
+
+    /** ui state for latest news */
+    data class SearchNewsUiState(
+        val isLoading: Boolean = false,
+        val searchedNews: News? = null,
+        val isError: Boolean = false
+    )
+
 }
-
-
-
-/** ui state for latest news */
-data class SearchNewsUiState(
-    val isLoading: Boolean = false,
-    val searchedNews : News? = null,
-    val isError: Boolean = false
-)

@@ -19,7 +19,7 @@ class LatestNewsViewModel: ViewModel() {
     private val _isLoading = MutableStateFlow(true)
     //
 
-    val latestNewResponse : Flow<News> = latestNewsRepository.fetchNewsData
+    val latestNewResponse: Flow<News> = latestNewsRepository.fetchNewsData
 
     val uiState: StateFlow<LatestNewsUiState> = combine(
         _isLoading,
@@ -29,7 +29,7 @@ class LatestNewsViewModel: ViewModel() {
             isLoading = true
         )
 
-        when(response.news.isNullOrEmpty().not()){
+        when (response.news.isNullOrEmpty().not()) {
             true -> {
                 LatestNewsUiState(
                     isLoading = false,
@@ -37,6 +37,7 @@ class LatestNewsViewModel: ViewModel() {
                 )
 
             }
+
             else -> {
                 LatestNewsUiState(
                     isLoading = false,
@@ -48,13 +49,18 @@ class LatestNewsViewModel: ViewModel() {
         }
 
 
-    }.stateIn(initialValue = LatestNewsUiState(true,News()), scope = viewModelScope, started = SharingStarted.WhileSubscribed(5000))
+    }.stateIn(
+        initialValue = LatestNewsUiState(true, News()),
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000)
+    )
+
+
+    /** ui state for latest news */
+    data class LatestNewsUiState(
+        val isLoading: Boolean = false,
+        val latestNews: News? = null,
+        val isError: Boolean = false
+    )
 
 }
-
-/** ui state for latest news */
-data class LatestNewsUiState(
-    val isLoading: Boolean = false,
-    val latestNews : News? = null,
-    val isError: Boolean = false
-)
