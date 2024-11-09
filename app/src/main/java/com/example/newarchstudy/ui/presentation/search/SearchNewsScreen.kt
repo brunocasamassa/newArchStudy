@@ -34,13 +34,9 @@ import com.example.newarchstudy.viewmodels.SearchNewsViewModel
 import kotlinx.coroutines.flow.flow
 
 @Composable
-fun SearchNewsScreen() {
-
-    val uiState by Factory.searchNewsViewModel.uiState.collectAsStateWithLifecycle()
+fun SearchNewsScreen(uiState: SearchNewsUiState) {
 
     BoxWithConstraints() {
-
-        SearchTopBar(Factory.searchNewsViewModel)
 
         var selectedNew = rememberSaveable {
             mutableStateOf("")
@@ -79,41 +75,4 @@ fun SearchNewsScreen() {
 }
 
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun SearchTopBar(viewModel: SearchNewsViewModel) {
-
-
-    var currentlyText by remember {
-        mutableStateOf("")
-    }
-    var isActive by remember {mutableStateOf(false)}
-
-    SearchBar(
-            onQueryChange = { currentlyText = it }, //update the value of searchText
-            onSearch = {
-                isActive = false
-                viewModel.searchNews(currentlyText)
-            }, //the callback to be invoked when the input service triggers the ImeAction.Search action
-            onActiveChange = { isActive = it}, //the callback to be invoked when this search bar's active state is changed
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            active = isActive,
-            content = { currentlyText},
-            query = currentlyText,
-            placeholder = { Text(text = stringResource(R.string.search)) },
-            leadingIcon = { Icon(imageVector = Icons.Filled.Search, contentDescription = stringResource(
-                R.string.search) )
-            },
-            trailingIcon = { Icon(imageVector = Icons.Filled.Close, contentDescription = stringResource(
-                R.string.close) )
-            }
-        )
-
-
-
-
-
-}
 
