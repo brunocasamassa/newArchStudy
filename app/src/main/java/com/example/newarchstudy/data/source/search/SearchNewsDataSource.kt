@@ -6,10 +6,6 @@ import kotlinx.coroutines.flow.Flow
 interface SearchNewsDataSource {
 
     fun searchNews(
-        description: String?,
-        title: String?,
-        author: String?,
-        language: String?,
-        region: String?
+        text: String?
     ): Flow<News>
 }

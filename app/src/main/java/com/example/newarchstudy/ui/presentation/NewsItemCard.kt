@@ -33,7 +33,7 @@ import com.bumptech.glide.integration.compose.GlideImage
 
 @OptIn(ExperimentalGlideComposeApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun NewsItemCompose(
+fun NewsItemCard(
     selectedNew: MutableState<String>?,
     name: String,
     image: String,

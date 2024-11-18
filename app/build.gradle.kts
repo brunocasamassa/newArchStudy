@@ -1,6 +1,10 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
+    alias(libs.plugins.android.dagger.hilt) apply true
+    alias(libs.plugins.kapt)
+    alias(libs.plugins.ksp)
+
 }
 
 android {
@@ -20,14 +24,31 @@ android {
         }
     }
 
+    hilt {
+        enableAggregatingTask = false
+    }
+
     buildTypes {
+
+        all {
+            buildFeatures{
+                buildConfig = true
+            }
+
+            buildConfigField("String", "BASE_URL", "\"https://api.currentsapi.services/v1/\"")
+            buildConfigField("String", "API_KEY", "\"fnP9i4cdX3j2cCYhLA_SmsKTss04PDcBBlBLMVL3p9gDjrxN\"")
+
+        }
+
         release {
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+
         }
+
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
@@ -48,10 +69,6 @@ android {
         }
     }
 
-    applicationVariants.all(){
-        buildConfigField("String", "BASE_URL", "https://api.currentsapi.services/v1/")
-        buildConfigField("String", "API_KEY", "fnP9i4cdX3j2cCYhLA_SmsKTss04PDcBBlBLMVL3p9gDjrxN")
-    }
 }
 
 dependencies {
@@ -65,13 +82,16 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
     implementation(libs.androidx.lifecycle.runtime.compose.android)
+    implementation(libs.io.grpc.okhttp)
+    implementation(libs.bumptech.glide)
+    implementation(libs.retrofit2.gson)
+    implementation(libs.retrofit2.retrofit)
+    implementation(libs.android.dagger.hilt)
+    implementation(libs.androidx.hilt.navigation.compose)
+    kapt(libs.android.dagger.hilt.compiler)
+    implementation(libs.retrofit2.coroutine.adapter)
+    implementation(libs.okhttp.logging.interceptor)
     testImplementation(libs.junit)
-    implementation("io.grpc:grpc-okhttp:1.58.0")
-    implementation("com.github.bumptech.glide:compose:1.0.0-beta01")
-    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
-    implementation("com.squareup.retrofit2:retrofit:2.9.0")
-    implementation("com.squareup.okhttp3:logging-interceptor:4.9.1")
-    implementation("com.jakewharton.retrofit:retrofit2-kotlin-coroutines-adapter:0.9.2")
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))

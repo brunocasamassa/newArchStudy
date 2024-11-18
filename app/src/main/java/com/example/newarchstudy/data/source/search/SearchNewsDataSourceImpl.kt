@@ -1,30 +1,38 @@
 package com.example.newarchstudy.data.source.search
 
-import com.example.newarchstudy.data.NewsWebService
-import com.example.newarchstudy.data.interceptors.NewsInterceptor
+import com.example.newarchstudy.data.services.NewsWebService
 import com.example.newarchstudy.data.models.news.News
-import com.example.newarchstudy.utils.extensions.buildRetrofit
-import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import okhttp3.OkHttpClient
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+import kotlinx.coroutines.withTimeoutOrNull
+import javax.inject.Inject
 
-class SearchNewsDataSourceImpl : SearchNewsDataSource {
+class SearchNewsDataSourceImpl @Inject constructor(
+    private val newsWebService: NewsWebService
+)  : SearchNewsDataSource {
 
-    private var newsWebService: NewsWebService = buildRetrofit("https://api.currentsapi.services/v1/").create(NewsWebService::class.java)
+    /**  a Job class is a representation of a coroutine itself, a way to handle it*/
 
-    override fun searchNews(description : String?, title : String?, author : String?, language : String?, region: String?) : Flow<News> {
-        return flow {
-            val response = newsWebService.getSearchNews(description, title, author, language, region)
-            emit(response.await())
-            delay(5000)
+    /** A deffered is a job with a result , like the result of a thread*/
 
-        }
+    override fun searchNews(text: String?): Flow<News> = flow {
+
+        val timeoutDuration = 10000L // 10 seconds timeout
+
+        val descriptionDeferred =  withTimeoutOrNull(timeoutDuration){ newsWebService.getSearchNews(description = text).await()}
+        val authorDeferred = withTimeoutOrNull(timeoutDuration){ newsWebService.getSearchNews(author = text).await()}
+        val titleDeferred =  withTimeoutOrNull(timeoutDuration){  newsWebService.getSearchNews(title = text).await()}
+
+        val newsFilteredByDescription = descriptionDeferred?.news ?: listOf()
+        val newsFilteredByAuthor = authorDeferred?.news ?: listOf()
+        val newsFilteredByTitle = titleDeferred?.news ?: listOf()
+
+        val combinedNews = (newsFilteredByTitle + newsFilteredByAuthor + newsFilteredByDescription)
+            .distinctBy { it.id } // Assuming News has an 'id' property
+
+        emit(News(combinedNews, status = titleDeferred?.status))
+        delay(5000)
+
     }
-
-
-
 }

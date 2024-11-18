@@ -5,6 +5,6 @@ import kotlinx.coroutines.flow.Flow
 
 interface SearchNewsRepository {
 
-     fun searchNews(description : String? = "", title : String?="", author : String?, language : String?="", region: String?="") : Flow<News>
+     fun searchNews(text:String) : Flow<News>
 
 }

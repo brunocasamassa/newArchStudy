@@ -3,16 +3,12 @@ package com.example.newarchstudy.viewmodels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.newarchstudy.data.models.news.News
-import com.example.newarchstudy.utils.Factory.searchNewsRepository
-import kotlinx.coroutines.flow.Flow
+import com.example.newarchstudy.data.repositories.search.SearchNewsRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.single
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 /**
  * cold streams -> starts only after a subscribers (flows)
@@ -22,63 +18,27 @@ import kotlinx.coroutines.launch
  *
  * */
 
-/** View Model for Latest News */
-class SearchNewsViewModel : ViewModel() {
+@HiltViewModel
+class SearchNewsViewModel @Inject constructor(
+    private val searchNewsRepository: SearchNewsRepository
+) : ViewModel() {
 
-    //necessario esses mutables para utilizar dentro da classe, mesmo soh observando o UIstate
     private val _isLoading = MutableStateFlow(true)
-    private val description = MutableStateFlow("")
+    val isLoading: StateFlow<Boolean>
+        get() = _isLoading
 
 
-    var title: Flow<String> = MutableStateFlow("")
-    var author: Flow<String> = MutableStateFlow("")
-    var language: Flow<String> = MutableStateFlow("")
-    var region: Flow<String> = MutableStateFlow("")
-
-    private var _searchNews: Flow<News> =
-        searchNewsRepository.searchNews(author = description.value)
-
-    //todo test
-    val uiState = MutableStateFlow(SearchNewsUiState()) /*= combine(
-        _isLoading,
-        _searchNews
-    ) { _, response ->
-        SearchNewsUiState(
-            isLoading = true
-        )
-
-        when (response.news.isNullOrEmpty().not()) {
-            true -> {
-                SearchNewsUiState(
-                    isLoading = false,
-                    searchedNews = response
-                )
-
-            }
-
-            else -> {
-                SearchNewsUiState(
-                    isLoading = false,
-                    isError = true
-                )
-
-            }
-
-        }
+    private val _uiState = MutableStateFlow(SearchNewsUiState())
+    val uiState: StateFlow<SearchNewsUiState>
+        get() = _uiState
 
 
-    }.stateIn(
-        initialValue = SearchNewsUiState(false, News()),
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5000)
-    )*/
-
-
-    fun searchNews(text: String) {
+    fun searchNews(typedText: String) {
         viewModelScope.launch {
-            searchNewsRepository.searchNews(author = text)
+            _uiState.value = SearchNewsUiState(isLoading = true)
+            searchNewsRepository.searchNews(text = typedText)
                 .collect {
-                    uiState.value = when (it.news.isNullOrEmpty().not()) {
+                    _uiState.value = when (it.news.isNullOrEmpty().not()) {
                         true -> {
                             SearchNewsUiState(
                                 isLoading = false,

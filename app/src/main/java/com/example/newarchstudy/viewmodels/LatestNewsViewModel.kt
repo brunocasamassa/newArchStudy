@@ -3,26 +3,32 @@ package com.example.newarchstudy.viewmodels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.newarchstudy.data.models.news.News
-import com.example.newarchstudy.utils.Factory.latestNewsRepository
+import com.example.newarchstudy.data.repositories.latest.LatestNewsRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
+import javax.inject.Inject
 
 
-/** View Model for Latest News */
-class LatestNewsViewModel: ViewModel() {
+@HiltViewModel
+class LatestNewsViewModel @Inject constructor(
+     latestNewsRepository: LatestNewsRepository
+) : ViewModel() {
 
     //necessario esses mutables para utilizar dentro da classe, mesmo soh observando o UIstate
     private val _isLoading = MutableStateFlow(true)
     //
+    val isLoading: StateFlow<Boolean>
+        get() = _isLoading
 
     val latestNewResponse: Flow<News> = latestNewsRepository.fetchNewsData
 
     val uiState: StateFlow<LatestNewsUiState> = combine(
-        _isLoading,
+        isLoading,
         latestNewResponse
     ) { _, response ->
         LatestNewsUiState(

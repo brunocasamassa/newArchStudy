@@ -1,16 +1,17 @@
 package com.example.newarchstudy.data.repositories.search
 
-import com.example.newarchstudy.utils.Factory.latestNewsDataSource
 import com.example.newarchstudy.data.models.news.News
-import com.example.newarchstudy.utils.Factory.searchNewsDataSource
+import com.example.newarchstudy.data.source.search.SearchNewsDataSource
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
-class SearchNewsRepositoryImpl : SearchNewsRepository {
+class SearchNewsRepositoryImpl @Inject constructor(
+    val searchNewsDataSource: SearchNewsDataSource
+)  : SearchNewsRepository {
 
 
-    override fun searchNews(description : String? , title : String?, author : String?, language : String?, region: String?): Flow<News> {
-
-        return searchNewsDataSource.searchNews(description?:null, title ?:null, author?:null, language?:null, region?:null)
+    override fun searchNews(text:String): Flow<News> {
+        return searchNewsDataSource.searchNews(text)
 
     }
 

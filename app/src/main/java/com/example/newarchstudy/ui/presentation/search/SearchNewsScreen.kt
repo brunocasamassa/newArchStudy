@@ -24,24 +24,36 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.newarchstudy.R
 import com.example.newarchstudy.ui.presentation.IndeterminateCircularIndicator
-import com.example.newarchstudy.ui.presentation.NewsItemCompose
-import com.example.newarchstudy.utils.Factory
-@Composable
-fun SearchNewsScreen() {
+import com.example.newarchstudy.ui.presentation.NewsItemCard import com.example.newarchstudy.viewmodels.SearchNewsViewModel
 
-    val uiState by Factory.searchNewsViewModel.uiState.collectAsStateWithLifecycle()
+@Composable
+fun SearchNewsScreen(viewModel: SearchNewsViewModel = hiltViewModel()) {
+
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     BoxWithConstraints() {
+
+        /**
+         *
+         *  rememberSaveable = keep its value after lifecycle changes
+         *  remember = lose its value after lifecycle changes
+         *
+         * */
 
         var selectedNew = rememberSaveable {
             mutableStateOf("")
         }
 
         val isLoading: MutableState<Boolean> =
-            rememberSaveable { mutableStateOf(uiState.isLoading) }
+            remember { mutableStateOf(uiState.isLoading) }
+
+        /**
+         *
+         * */
 
         if (uiState.isLoading) {
           IndeterminateCircularIndicator(loading = isLoading, this)
@@ -49,7 +61,7 @@ fun SearchNewsScreen() {
 
             LazyColumn(modifier = Modifier.padding(vertical = 4.dp)) {
                 items(items = uiState?.searchedNews?.news.orEmpty()) {
-                    NewsItemCompose(
+                    NewsItemCard(
                         selectedNew,
                         name = it.title,
                         image = it.image,
@@ -75,7 +87,7 @@ fun SearchNewsScreen() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SearchTopBar() {
+fun SearchTopBar(viewModel: SearchNewsViewModel = hiltViewModel()) {
 
     var currentlyText by remember {
         mutableStateOf("")
@@ -86,7 +98,7 @@ fun SearchTopBar() {
         onQueryChange = { currentlyText = it }, //update the value of searchText
         onSearch = {
             isActive = false
-            Factory.searchNewsViewModel.searchNews(currentlyText)
+            viewModel.searchNews(currentlyText)
 
         }, //the callback to be invoked when the input service triggers the ImeAction.Search action
         onActiveChange = {
