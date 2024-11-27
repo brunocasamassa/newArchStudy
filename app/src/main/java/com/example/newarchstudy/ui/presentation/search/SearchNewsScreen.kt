@@ -23,6 +23,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -34,8 +36,9 @@ import com.example.newarchstudy.ui.presentation.NewsItemCard import com.example.
 fun SearchNewsScreen(viewModel: SearchNewsViewModel = hiltViewModel()) {
 
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    var contentTitle = stringResource(R.string.search_news)
 
-    BoxWithConstraints() {
+    BoxWithConstraints(Modifier.semantics{ contentDescription = contentTitle}) {
 
         /**
          *

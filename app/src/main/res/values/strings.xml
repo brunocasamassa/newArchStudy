@@ -4,4 +4,6 @@
     <string name="bottom_navigation_profile">Search</string>
     <string name="search">Search</string>
     <string name="close">close</string>
+    <string name="latest_news">Latest News</string>
+    <string name="search_news">Search News</string>
 </resources>

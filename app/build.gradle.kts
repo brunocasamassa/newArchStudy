@@ -1,3 +1,6 @@
+import org.gradle.kotlin.dsl.kotlinOptions
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
@@ -9,7 +12,7 @@ plugins {
 
 android {
     namespace = "com.example.newarchstudy"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.example.newarchstudy"
@@ -51,11 +54,11 @@ android {
 
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_18
+        targetCompatibility = JavaVersion.VERSION_18
     }
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "18"
     }
     buildFeatures {
         compose = true
@@ -66,6 +69,15 @@ android {
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
+        }
+    }
+
+    tasks.withType<KotlinCompile> {
+        kotlinOptions {
+            jvmTarget = "18" // Or your desired Java target version
+            freeCompilerArgs = freeCompilerArgs + listOf(
+                "-XaddExports=jdk.compiler/com.sun.tools.javac.main=ALL-UNNAMED"
+            )
         }
     }
 
