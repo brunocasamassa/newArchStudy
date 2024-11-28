@@ -6,7 +6,6 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.android.dagger.hilt) apply true
     alias(libs.plugins.kapt)
-    alias(libs.plugins.ksp)
 
 }
 
