@@ -1,7 +1,6 @@
 [versions]
-agp = "8.7.2"
-kotlin = "1.9.0"
-ksp = "1.9.24-1.0.20"
+agp = "8.7.3"
+kotlin = "2.0.0"
 coreKtx = "1.15.0"
 junit = "4.13.2"
 junitVersion = "1.1.5"
@@ -54,5 +53,5 @@ okhttp-logging-interceptor = {group = "com.squareup.okhttp3", name = "logging-in
 android-application = { id = "com.android.application", version.ref = "agp" }
 jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 android-dagger-hilt = {id = "com.google.dagger.hilt.android", version.ref = "hilt"}
-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin" }
-ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+kapt = { id = "org.jetbrains.kotlin.kapt" }
+kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
