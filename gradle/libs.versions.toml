@@ -1,16 +1,20 @@
 [versions]
 agp = "8.7.3"
+desugar_jdk_libs = "2.0.3"
 kotlin = "2.0.0"
 coreKtx = "1.15.0"
 junit = "4.13.2"
 junitVersion = "1.1.5"
 espressoCore = "3.5.1"
-lifecycleRuntimeKtx = "2.8.2"
-activityCompose = "1.8.0"
+lifecycleRuntimeKtx = "2.8.7"
+activityCompose = "1.9.3"
 composeBom = "2024.02.00"
 lifecycleRuntimeComposeAndroid = "2.8.4"
 hilt = "2.52"
 androidxHiltNavigationCompose = "1.2.0"
+mockitoAndroid = "2.24.5"
+mockitoCore = "2.28.2"
+mockwebserver = "4.9.0"
 okhttp = "1.58.0"
 okhttp-logging-interceptor = "4.9.1"
 glide = "1.0.0-beta01"
@@ -18,12 +22,9 @@ retrofit2 = "2.9.0"
 retrofit2-coroutines-adapter = "0.9.2"
 
 
-
-
-
-
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+desugar_jdk_libs = { module = "com.android.tools:desugar_jdk_libs", version.ref = "desugar_jdk_libs" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
@@ -43,6 +44,9 @@ android-dagger-hilt-compiler = {group = "com.google.dagger", name = "hilt-androi
 androidx-hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "androidxHiltNavigationCompose" }
 io-grpc-okhttp = {group = "io.grpc", name = "grpc-okhttp", version.ref = "okhttp"}
 bumptech-glide = {group = "com.github.bumptech.glide", name = "compose", version.ref = "glide"}
+mockito-android = { module = "org.mockito:mockito-android", version.ref = "mockitoAndroid" }
+mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockitoCore" }
+mockwebserver = { module = "com.squareup.okhttp3:mockwebserver", version.ref = "mockwebserver" }
 retrofit2-gson = {group = "com.squareup.retrofit2", name = "converter-gson", version.ref = "retrofit2"}
 retrofit2-retrofit = {group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit2"}
 retrofit2-coroutine-adapter = {group = "com.jakewharton.retrofit", name = "retrofit2-kotlin-coroutines-adapter", version.ref = "retrofit2-coroutines-adapter"}

@@ -1,7 +1,7 @@
 package com.example.newarchstudy.data.di
 
 import com.example.newarchstudy.BuildConfig
-import com.example.newarchstudy.data.services.NewsWebService
+import com.example.newarchstudy.data.apis.NewsApi
 import com.example.newarchstudy.data.repositories.latest.LatestNewsRepository
 import com.example.newarchstudy.data.repositories.latest.LatestNewsRepositoryImpl
 import com.example.newarchstudy.data.repositories.search.SearchNewsRepository
@@ -21,10 +21,10 @@ import dagger.hilt.components.SingletonComponent
 object AppModuleInjector {
 
     @Provides
-    fun providesNewsWebService(
-    ): NewsWebService {
+    fun providesNewsApi(
+    ): NewsApi {
         return buildRetrofit(BuildConfig.BASE_URL).create(
-            NewsWebService::class.java
+            NewsApi::class.java
         )
     }
 

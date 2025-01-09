@@ -1,11 +1,11 @@
-package com.example.newarchstudy.data.services
+package com.example.newarchstudy.data.apis
 
 import com.example.newarchstudy.data.models.news.News
 import kotlinx.coroutines.Deferred
 import retrofit2.http.GET
 import retrofit2.http.Query
 
-interface NewsWebService {
+interface NewsApi {
 
     @GET("latest-news/")
     fun getLatestNews(): Deferred<News>

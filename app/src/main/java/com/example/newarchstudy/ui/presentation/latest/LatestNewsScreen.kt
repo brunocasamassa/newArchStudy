@@ -7,8 +7,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -20,48 +18,59 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.newarchstudy.R
 import com.example.newarchstudy.ui.presentation.IndeterminateCircularIndicator
 import com.example.newarchstudy.ui.presentation.NewsItemCard
 import com.example.newarchstudy.ui.theme.NewArchStudyTheme
+import com.example.newarchstudy.viewmodels.LatestNewsUiState
 import com.example.newarchstudy.viewmodels.LatestNewsViewModel
 
 @Composable
 fun LatestNewsScreen(viewModel: LatestNewsViewModel = hiltViewModel()) {
 
-    val uiState by viewModel.uiState.collectAsState()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
     var contentTitle = stringResource(R.string.latest_news)
 
-    BoxWithConstraints(modifier = Modifier.semantics{ contentDescription = contentTitle}) {
+    BoxWithConstraints(modifier = Modifier.semantics { contentDescription = contentTitle }) {
 
         var isSelected = rememberSaveable {
             mutableStateOf("")
         }
 
-        var isLoading: MutableState<Boolean> =
-            rememberSaveable { mutableStateOf(uiState.isLoading) }
 
-        if (uiState.isLoading) {
-            IndeterminateCircularIndicator(loading = isLoading, this)
-        } else {
-
-            LazyColumn(modifier = Modifier.padding(vertical = 4.dp)) {
-                items(items = uiState?.latestNews?.news.orEmpty()) {
-                    NewsItemCard(
-                        isSelected,
-                        name = it.title,
-                        image = it.image,
-                        description = it.description,
-                        url = it.url
-                    )
-                }
+        when (uiState) {
+            is LatestNewsUiState.Loading -> {
+                IndeterminateCircularIndicator(
+                    loading = rememberSaveable { mutableStateOf(true) },
+                    this
+                )
             }
 
-            if (uiState.isError) Toast.makeText(
-                LocalContext.current,
-                uiState.latestNews?.status,
-                Toast.LENGTH_LONG
-            ).show()
+            is LatestNewsUiState.Success -> {
+                LazyColumn(modifier = Modifier.padding(vertical = 4.dp)) {
+                    items(items = (uiState as? LatestNewsUiState.Success)?.response?.news.orEmpty() ) {
+                        NewsItemCard(
+                            isSelected,
+                            name = it.title,
+                            image = it.image,
+                            description = it.description,
+                            url = it.url
+                        )
+                    }
+                }
+
+            }
+
+            is LatestNewsUiState.Error -> {
+                Toast.makeText(
+                    LocalContext.current,
+                    (uiState as? LatestNewsUiState.Error)?.message,
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+
 
         }
 

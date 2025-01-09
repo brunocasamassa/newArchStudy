@@ -1,6 +1,6 @@
 package com.example.newarchstudy.data.source.search
 
-import com.example.newarchstudy.data.services.NewsWebService
+import com.example.newarchstudy.data.apis.NewsApi
 import com.example.newarchstudy.data.models.news.News
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -9,7 +9,7 @@ import kotlinx.coroutines.withTimeoutOrNull
 import javax.inject.Inject
 
 class SearchNewsDataSourceImpl @Inject constructor(
-    private val newsWebService: NewsWebService
+    private val newsApi: NewsApi
 )  : SearchNewsDataSource {
 
     /**  a Job class is a representation of a coroutine itself, a way to handle it*/
@@ -20,9 +20,9 @@ class SearchNewsDataSourceImpl @Inject constructor(
 
         val timeoutDuration = 10000L // 10 seconds timeout
 
-        val descriptionDeferred =  withTimeoutOrNull(timeoutDuration){ newsWebService.getSearchNews(description = text).await()}
-        val authorDeferred = withTimeoutOrNull(timeoutDuration){ newsWebService.getSearchNews(author = text).await()}
-        val titleDeferred =  withTimeoutOrNull(timeoutDuration){  newsWebService.getSearchNews(title = text).await()}
+        val descriptionDeferred =  withTimeoutOrNull(timeoutDuration){ newsApi.getSearchNews(description = text).await()}
+        val authorDeferred = withTimeoutOrNull(timeoutDuration){ newsApi.getSearchNews(author = text).await()}
+        val titleDeferred =  withTimeoutOrNull(timeoutDuration){  newsApi.getSearchNews(title = text).await()}
 
         val newsFilteredByDescription = descriptionDeferred?.news ?: listOf()
         val newsFilteredByAuthor = authorDeferred?.news ?: listOf()
