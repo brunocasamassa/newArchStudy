@@ -33,26 +33,23 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.tooling.preview.PreviewParameter
-import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.newarchstudy.DetailHeadlines.arg_description
+import com.example.newarchstudy.DetailHeadlines.arg_image
+import com.example.newarchstudy.DetailHeadlines.arg_name
+import com.example.newarchstudy.DetailHeadlines.arg_url
+import com.example.newarchstudy.ui.presentation.detail.DetailHeadlineScreen
 import com.example.newarchstudy.ui.presentation.latest.LatestNewsScreen
 import com.example.newarchstudy.ui.presentation.search.SearchNewsScreen
 import com.example.newarchstudy.ui.presentation.search.SearchTopBar
 import com.example.newarchstudy.ui.theme.NewArchStudyTheme
-import com.example.newarchstudy.viewmodels.SearchNewsViewModel
+import com.example.newarchstudy.utils.extensions.navigateSingleTopTo
 import dagger.hilt.android.AndroidEntryPoint
-import dagger.hilt.internal.TestSingletonComponent
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.single
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -64,11 +61,10 @@ class MainActivity : ComponentActivity() {
 
         setContent {
 
-            //todo set navigation route
-                NewArchStudyTheme {
-                        AppNavGraph()
-                }
+            NewArchStudyTheme {
+                AppNavGraph()
             }
+        }
 
 
     }
@@ -77,15 +73,15 @@ class MainActivity : ComponentActivity() {
     @Composable
     fun AppNavGraph(
         modifier: Modifier = Modifier,
-        navController: NavHostController = rememberNavController()
+        appNavController: NavHostController = rememberNavController()
     ) {
 
         var homeSelected = rememberSaveable {
             mutableStateOf(true)
         }
 
-        NavHost(navController = rememberNavController(), startDestination = "main") {
-            composable("main") {
+        NavHost(navController = appNavController, startDestination = LatestNews.routeWithArgs) {
+            composable(route = LatestNews.routeWithArgs) {
 
                 Scaffold(
                     topBar = { if (homeSelected.value.not()) SearchTopBar() },
@@ -101,7 +97,34 @@ class MainActivity : ComponentActivity() {
                     ) {
                         when (it) {
                             true ->
-                                LatestNewsScreen()
+                                LatestNewsScreen { image, name, description, url ->
+                                    appNavController.navigateSingleTopTo(
+                                        DetailHeadlines.routeWithArgs.replace(
+                                            arg_description,
+                                            description
+                                        )
+                                            .replace(
+                                                arg_image,
+                                                URLEncoder.encode(
+                                                    image,
+                                                    StandardCharsets.UTF_8.toString()
+                                                )
+                                            )
+                                            .replace(
+                                                arg_name,
+                                                URLEncoder.encode(
+                                                    name,
+                                                    StandardCharsets.UTF_8.toString()
+                                                )
+                                            ).replace(
+                                                arg_url,
+                                                URLEncoder.encode(
+                                                    url,
+                                                    StandardCharsets.UTF_8.toString()
+                                                )
+                                            )
+                                    )
+                                }
 
                             else ->
                                 SearchNewsScreen()
@@ -112,9 +135,20 @@ class MainActivity : ComponentActivity() {
                 }
 
             }
+
+            composable(
+                route = DetailHeadlines.routeWithArgs,
+                arguments = DetailHeadlines.arguments
+            ) {
+
+                DetailHeadlineScreen(
+                    it.arguments?.getString(arg_image),
+                    it.arguments?.getString(arg_name),
+                    it.arguments?.getString(arg_description),
+                    it.arguments?.getString(arg_url)
+                )
+            }
         }
-
-
 
 
     }
@@ -157,8 +191,6 @@ class MainActivity : ComponentActivity() {
 
 
     }
-
-
 
 
 }

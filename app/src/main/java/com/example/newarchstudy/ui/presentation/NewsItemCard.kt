@@ -5,6 +5,7 @@ import android.net.Uri
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.spring
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.height
@@ -38,7 +39,8 @@ fun NewsItemCard(
     name: String,
     image: String,
     description: String,
-    url: String
+    url: String,
+    onNewsLineClicked: () -> Unit = {}
 ) {
     Box {
 
@@ -79,15 +81,18 @@ fun NewsItemCard(
                         .width(200.dp)
                         .height(200.dp)
                         .clip(RoundedCornerShape(12))
-                        .align(Alignment.CenterHorizontally),
-                    model = image, contentDescription = description
+                        .align(Alignment.CenterHorizontally)
+                        .clickable { onNewsLineClicked() },
+                    model = image, contentDescription = description,
                 )
                 ElevatedCard(
                     shape = RoundedCornerShape(8.dp),
                     modifier = Modifier.padding(16.dp),
                     onClick = { context.startActivity(intent) }) {
                     Text(
-                        modifier = Modifier.align(Alignment.CenterHorizontally).padding(8.dp),
+                        modifier = Modifier
+                            .align(Alignment.CenterHorizontally)
+                            .padding(8.dp),
                         text = description,
                         fontSize = 12.sp,
                         maxLines = 4

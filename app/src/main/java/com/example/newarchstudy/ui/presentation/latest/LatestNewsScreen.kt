@@ -27,7 +27,8 @@ import com.example.newarchstudy.viewmodels.LatestNewsUiState
 import com.example.newarchstudy.viewmodels.LatestNewsViewModel
 
 @Composable
-fun LatestNewsScreen(viewModel: LatestNewsViewModel = hiltViewModel()) {
+fun LatestNewsScreen(viewModel: LatestNewsViewModel = hiltViewModel(),
+                     onNewsClicked: (image: String, name: String, description: String, url: String) -> Unit,) {
 
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -56,7 +57,15 @@ fun LatestNewsScreen(viewModel: LatestNewsViewModel = hiltViewModel()) {
                             name = it.title,
                             image = it.image,
                             description = it.description,
-                            url = it.url
+                            url = it.url,
+                            onNewsLineClicked = {
+                                onNewsClicked(
+                                    it.image,
+                                    it.title,
+                                    it.description,
+                                    it.url
+                                )
+                            }
                         )
                     }
                 }

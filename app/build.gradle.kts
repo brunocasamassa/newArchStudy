@@ -121,5 +121,7 @@ dependencies {
     testImplementation(libs.mockito.core)
     androidTestImplementation(libs.mockito.android)
     testImplementation(libs.mockwebserver)
+    testImplementation(libs.mockk)
+    androidTestImplementation(libs.mockk.android)
 
 }
