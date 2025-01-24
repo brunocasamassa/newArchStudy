@@ -1,7 +1,7 @@
 package com.example.newarchstudy.data.repositories.latest
 
-import com.example.newarchstudy.data.models.news.News
-import dagger.Provides
+import com.example.newarchstudy.data.models.dto.ResponseNews
+import com.example.newarchstudy.data.models.entities.News
 import kotlinx.coroutines.flow.Flow
 
 

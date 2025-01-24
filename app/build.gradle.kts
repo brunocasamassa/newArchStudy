@@ -108,8 +108,8 @@ dependencies {
     implementation(libs.retrofit2.coroutine.adapter)
     implementation(libs.okhttp.logging.interceptor)
 
-
     testImplementation(libs.junit)
+    testImplementation(libs.truth)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
@@ -117,9 +117,11 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
-    // Mockito Testing
-    testImplementation(libs.mockito.core)
-    androidTestImplementation(libs.mockito.android)
+    //test coroutines
+    implementation (libs.kotlinx.coroutines.test)
+
+    testImplementation(libs.androidx.core.testing)
+
     testImplementation(libs.mockwebserver)
     testImplementation(libs.mockk)
     androidTestImplementation(libs.mockk.android)

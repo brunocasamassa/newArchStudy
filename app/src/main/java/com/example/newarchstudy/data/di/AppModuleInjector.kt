@@ -15,6 +15,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import okhttp3.HttpUrl.Companion.toHttpUrl
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -23,7 +24,7 @@ object AppModuleInjector {
     @Provides
     fun providesNewsApi(
     ): NewsApi {
-        return buildRetrofit(BuildConfig.BASE_URL).create(
+        return buildRetrofit(BuildConfig.BASE_URL.toHttpUrl()).create(
             NewsApi::class.java
         )
     }

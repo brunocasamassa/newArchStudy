@@ -1,6 +1,6 @@
-package com.example.newarchstudy.data.models.news
+package com.example.newarchstudy.data.models.dto
 
-data class New(
+data class ResponseNew(
     val author: String,
     val category: List<String>,
     val description: String,

@@ -1,7 +1,9 @@
 package com.example.newarchstudy.data.source.search
 
 import com.example.newarchstudy.data.apis.NewsApi
-import com.example.newarchstudy.data.models.news.News
+import com.example.newarchstudy.data.models.dto.ResponseNews
+import com.example.newarchstudy.data.models.entities.News
+import com.example.newarchstudy.utils.extensions.toEntity
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -20,9 +22,9 @@ class SearchNewsDataSourceImpl @Inject constructor(
 
         val timeoutDuration = 10000L // 10 seconds timeout
 
-        val descriptionDeferred =  withTimeoutOrNull(timeoutDuration){ newsApi.getSearchNews(description = text).await()}
-        val authorDeferred = withTimeoutOrNull(timeoutDuration){ newsApi.getSearchNews(author = text).await()}
-        val titleDeferred =  withTimeoutOrNull(timeoutDuration){  newsApi.getSearchNews(title = text).await()}
+        val descriptionDeferred =  withTimeoutOrNull(timeoutDuration){ newsApi.getSearchNews(description = text)}
+        val authorDeferred = withTimeoutOrNull(timeoutDuration){ newsApi.getSearchNews(author = text)}
+        val titleDeferred =  withTimeoutOrNull(timeoutDuration){  newsApi.getSearchNews(title = text)}
 
         val newsFilteredByDescription = descriptionDeferred?.news ?: listOf()
         val newsFilteredByAuthor = authorDeferred?.news ?: listOf()
@@ -31,7 +33,7 @@ class SearchNewsDataSourceImpl @Inject constructor(
         val combinedNews = (newsFilteredByTitle + newsFilteredByAuthor + newsFilteredByDescription)
             .distinctBy { it.id } // Assuming News has an 'id' property
 
-        emit(News(combinedNews, status = titleDeferred?.status))
+        emit(ResponseNews(news = combinedNews, status = "ok").toEntity())
         delay(5000)
 
     }

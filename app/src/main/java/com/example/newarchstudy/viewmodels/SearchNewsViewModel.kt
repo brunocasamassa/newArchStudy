@@ -2,7 +2,8 @@ package com.example.newarchstudy.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.newarchstudy.data.models.news.News
+import com.example.newarchstudy.data.models.dto.ResponseNews
+import com.example.newarchstudy.data.models.entities.News
 import com.example.newarchstudy.data.repositories.search.SearchNewsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow

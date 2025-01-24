@@ -2,7 +2,8 @@ package com.example.newarchstudy.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.newarchstudy.data.models.news.News
+import com.example.newarchstudy.data.models.dto.ResponseNews
+import com.example.newarchstudy.data.models.entities.News
 import com.example.newarchstudy.data.repositories.latest.LatestNewsRepository
 import com.example.newarchstudy.data.source.latest.LatestNewsDataSourceImpl.Companion.STATUS_OK
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -28,7 +29,6 @@ class LatestNewsViewModel @Inject constructor(
     val uiState: StateFlow<LatestNewsUiState> = _uiState
 
 
-    // for some reason, this uiState Loading only works outside viewmodel scope
     init {
 
         viewModelScope.launch(Dispatchers.IO) {

@@ -1,17 +1,16 @@
 package com.example.newarchstudy.data.apis
 
-import com.example.newarchstudy.data.models.news.News
-import kotlinx.coroutines.Deferred
+import com.example.newarchstudy.data.models.dto.ResponseNews
 import retrofit2.http.GET
 import retrofit2.http.Query
 
 interface NewsApi {
 
     @GET("latest-news/")
-    fun getLatestNews(): Deferred<News>
+    suspend fun getLatestNews(): ResponseNews
 
     @GET("search/")
-    fun getSearchNews(@Query(value = "description") description:String?= "",@Query(value = "title") title:String? = "", @Query(value = "author") author:String?="", @Query(value = "language") language:String?="",@Query(value = "region") region:String?=""): Deferred<News>
+    suspend fun getSearchNews(@Query(value = "description") description:String?= "",@Query(value = "title") title:String? = "", @Query(value = "author") author:String?="", @Query(value = "language") language:String?="",@Query(value = "region") region:String?=""): ResponseNews
 
 
 }
