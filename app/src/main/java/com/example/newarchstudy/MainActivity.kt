@@ -5,6 +5,9 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.fadeIn
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -70,6 +73,7 @@ class MainActivity : ComponentActivity() {
     }
 
 
+    @OptIn(ExperimentalAnimationApi::class)
     @Composable
     fun AppNavGraph(
         modifier: Modifier = Modifier,
@@ -136,62 +140,68 @@ class MainActivity : ComponentActivity() {
 
             }
 
+
+
             composable(
                 route = DetailHeadlines.routeWithArgs,
-                arguments = DetailHeadlines.arguments
+                arguments = DetailHeadlines.arguments,
             ) {
-
-                DetailHeadlineScreen(
-                    it.arguments?.getString(arg_image),
-                    it.arguments?.getString(arg_name),
-                    it.arguments?.getString(arg_description),
-                    it.arguments?.getString(arg_url)
-                )
+                AnimatedVisibility(visible = true,
+                    enter = fadeIn()
+                ) {
+                    DetailHeadlineScreen(
+                        it.arguments?.getString(arg_image),
+                        it.arguments?.getString(arg_name),
+                        it.arguments?.getString(arg_description),
+                        it.arguments?.getString(arg_url)
+                    )
+                }
             }
         }
-
-
-    }
-
-    @Composable
-    fun HomeBottomBar(homeSelected: MutableState<Boolean>) {
-        NavigationBar(
-        ) {
-            NavigationBarItem(
-                icon = {
-                    Icon(
-                        imageVector = Icons.Default.Home,
-                        contentDescription = null
-                    )
-                },
-                label = {
-                    Text(
-                        text = stringResource(R.string.bottom_navigation_home)
-                    )
-                },
-                selected = homeSelected.value,
-                onClick = { homeSelected.value = true }
-            )
-            NavigationBarItem(
-                icon = {
-                    Icon(
-                        imageVector = Icons.Default.Search,
-                        contentDescription = null
-                    )
-                },
-                label = {
-                    Text(
-                        text = stringResource(R.string.bottom_navigation_profile)
-                    )
-                },
-                selected = homeSelected.value.not(),
-                onClick = { homeSelected.value = false }
-            )
-        }
-
-
     }
 
 
 }
+
+@Composable
+fun HomeBottomBar(homeSelected: MutableState<Boolean>) {
+    NavigationBar(
+    ) {
+        NavigationBarItem(
+            icon = {
+                Icon(
+                    imageVector = Icons.Default.Home,
+                    contentDescription = null
+                )
+            },
+            label = {
+                Text(
+                    text = stringResource(R.string.bottom_navigation_home)
+                )
+            },
+            selected = homeSelected.value,
+            onClick = { homeSelected.value = true }
+        )
+        NavigationBarItem(
+            icon = {
+                Icon(
+                    imageVector = Icons.Default.Search,
+                    contentDescription = null
+                )
+            },
+            label = {
+                Text(
+                    text = stringResource(R.string.bottom_navigation_profile)
+                )
+            },
+            selected = homeSelected.value.not(),
+            onClick = { homeSelected.value = false }
+        )
+    }
+
+
+}
+
+
+
 

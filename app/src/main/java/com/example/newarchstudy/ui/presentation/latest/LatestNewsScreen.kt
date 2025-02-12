@@ -1,15 +1,24 @@
 package com.example.newarchstudy.ui.presentation.latest
 
 import android.widget.Toast
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.animate
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -25,10 +34,13 @@ import com.example.newarchstudy.ui.presentation.NewsItemCard
 import com.example.newarchstudy.ui.theme.NewArchStudyTheme
 import com.example.newarchstudy.viewmodels.LatestNewsUiState
 import com.example.newarchstudy.viewmodels.LatestNewsViewModel
+import kotlinx.coroutines.delay
 
 @Composable
-fun LatestNewsScreen(viewModel: LatestNewsViewModel = hiltViewModel(),
-                     onNewsClicked: (image: String, name: String, description: String, url: String) -> Unit,) {
+fun LatestNewsScreen(
+    viewModel: LatestNewsViewModel = hiltViewModel(),
+    onNewsClicked: (image: String, name: String, description: String, url: String) -> Unit,
+) {
 
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -50,23 +62,43 @@ fun LatestNewsScreen(viewModel: LatestNewsViewModel = hiltViewModel(),
             }
 
             is LatestNewsUiState.Success -> {
-                LazyColumn(modifier = Modifier.padding(vertical = 4.dp)) {
-                    items(items = (uiState as? LatestNewsUiState.Success)?.response?.news.orEmpty() ) {
-                        NewsItemCard(
-                            isSelected,
-                            name = it.title,
-                            image = it.image,
-                            description = it.description,
-                            url = it.url,
-                            onNewsLineClicked = {
-                                onNewsClicked(
-                                    it.image,
-                                    it.title,
-                                    it.description,
-                                    it.url
-                                )
-                            }
-                        )
+                LazyColumn(
+                    modifier = Modifier
+                        .padding(vertical = 4.dp)
+                ) {
+                    itemsIndexed(
+                        items = (uiState as? LatestNewsUiState.Success)?.response?.news.orEmpty(),
+                        key = { _, item -> item.url }) { index, newItem ->
+                        var isVisible by remember { mutableStateOf(false) }
+
+                        LaunchedEffect(key1 = true) {
+                            delay(index * 100L)
+                            isVisible = true
+                        }
+
+                        AnimatedVisibility(
+                            visible = isVisible,
+                            enter = /*slideInVertically(
+                                initialOffsetY = { it / 2 },
+                                animationSpec = tween(durationMillis = 500)
+                            ) + */fadeIn(animationSpec = tween(durationMillis = 1000))
+                        ) {
+                            NewsItemCard(
+                                isSelected,
+                                name = newItem.title,
+                                image = newItem.image,
+                                description = newItem.description,
+                                url = newItem.url,
+                                onNewsLineClicked = {
+                                    onNewsClicked(
+                                        newItem.image,
+                                        newItem.title,
+                                        newItem.description,
+                                        newItem.url
+                                    )
+                                }
+                            )
+                        }
                     }
                 }
 
